@@ -1,0 +1,26 @@
+{
+  "name": "gm-fisio-care",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "test": "node tests/domain.test.mjs",
+    "test:api": "node tests/api-smoke.mjs",
+    "admin:create": "node --env-file=.env.local scripts/create-admin.mjs",
+    "seed": "node --env-file=.env.local scripts/seed.mjs"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0",
+    "lucide-react": "^1.49.0",
+    "next": "^16.3.8",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  }
+}
