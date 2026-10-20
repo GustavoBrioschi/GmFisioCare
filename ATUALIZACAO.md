@@ -1,6 +1,14 @@
-# Atualização 0.2.1 — GM Fisio Care
+# Atualização 0.2.2 — GM Fisio Care
 
 ## Novidades desta versão
+
+- A tela inicial do paciente agora apresenta sessões realizadas, sessões restantes nos pacotes válidos e último atendimento, sem gráficos financeiros ou filtro de período.
+- Meus pacotes mostra especialidade, profissional, validade e sessões utilizadas. Últimas orientações apresenta os textos registrados pelos fisioterapeutas e permite abrir os detalhes completos.
+- Meus pagamentos resume valor em aberto, atrasos, próximo vencimento e eventuais devoluções. Histórico recente dá acesso aos detalhes e ao histórico completo.
+- Os resumos consideram somente os registros que a API já autoriza para aquele paciente. Sessões canceladas não entram no total realizado nem consomem sessões no resumo. Os painéis de administrador e profissional mantêm sua apresentação.
+- Validação desta entrega: 12 testes automatizados passaram. A compilação e a conferência visual no navegador ficaram pendentes por falha de autenticação da revisão automática de aprovação do Codex; não foram executadas nesta versão.
+
+## Melhorias mantidas da versão 0.2.1
 
 - Atendimentos e Pacotes agora exibem 30 registros por página, com Anterior e Próxima. Buscas e filtros consideram todos os registros e retornam à primeira página quando alterados.
 - Primeiro acesso: após entrar com a senha temporária, basta preencher Nova senha e Confirme a nova senha. A sessão autenticada identifica a conta. A troca comum em Configurações continua pedindo a senha atual.

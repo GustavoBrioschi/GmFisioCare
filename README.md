@@ -2,6 +2,8 @@
 
 Sistema acadêmico de gestão de uma clínica de fisioterapia. React com Next.js, API no servidor, Firebase Authentication e Cloud Firestore. Publicação prevista na Vercel. Somente dados fictícios.
 
+O painel do paciente reúne sessões realizadas e restantes, pacotes válidos, últimas orientações do fisioterapeuta, histórico recente e um resumo dos pagamentos. As barras representam sessões utilizadas no pacote, não avaliação de evolução clínica.
+
 ## Executar e testar
 
 Requer Node.js 22 ou superior.

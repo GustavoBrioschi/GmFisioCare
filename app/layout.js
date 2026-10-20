@@ -1,5 +1,6 @@
 import './globals.css';
 import './improvements.css';
+import './patient-dashboard.css';
 export const metadata = {
   title: 'GM Fisio Care | Gestão da clínica',
   description: 'Atendimentos, pacientes e gestão financeira da GM Fisio Care.',

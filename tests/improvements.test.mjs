@@ -4,6 +4,42 @@ import { isAllowedOrigin } from '../lib/origin.mjs';
 import { chargeSummary } from '../lib/finance.mjs';
 import { buildDemoCases, appendLocalDemoCases } from '../lib/demo-reports.mjs';
 import { seedState } from '../lib/seed.mjs';
+import { patientOverview } from '../lib/patient-dashboard.mjs';
+
+test('resumo do paciente separa sessões realizadas, pacotes válidos e pagamentos', () => {
+  const data = {
+    encounters: [
+      { id: '1', date: '2026-10-10', packageId: 'active', guidance: 'Orientação registrada' },
+      { id: '2', date: '2026-10-15', packageId: 'active', guidance: ' ' },
+      { id: '3', date: '2026-10-18', packageId: 'active', cancelled: true, guidance: 'Cancelada' },
+      { id: '4', date: '2026-11-01', packageId: 'active', guidance: 'Futura' }
+    ],
+    packages: [
+      { id: 'active', sessions: 10, expiresAt: '2026-10-20' },
+      { id: 'expired', sessions: 10, expiresAt: '2026-10-19' },
+      { id: 'cancelled', sessions: 10, expiresAt: '2026-11-20', cancelled: true }
+    ],
+    charges: [
+      { id: 'c', amount: 10000, installments: [{ number: 1, amount: 5000, dueDate: '2026-10-01' }, { number: 2, amount: 5000, dueDate: '2026-11-01' }] },
+      { id: 'refund', amount: 0, installments: [{ number: 1, amount: 2000, dueDate: '2026-10-01' }] }
+    ],
+    payments: [{ chargeId: 'c', installment: 1, kind: 'payment', amount: 2000 }, { chargeId: 'refund', installment: 1, kind: 'payment', amount: 2000 }]
+  };
+  const summary = patientOverview(data, '2026-10-20');
+  assert.equal(summary.completed, 2); assert.equal(summary.last.id, '2');
+  assert.equal(summary.remainingSessions, 8); assert.equal(summary.packages.length, 1);
+  assert.deepEqual(summary.guidance.map(e => e.id), ['1']);
+  assert.equal(summary.recent.length, 3); assert.equal(summary.recent[0].cancelled, true);
+  assert.equal(summary.pending, 8000); assert.equal(summary.overdue, 3000); assert.equal(summary.refund, 2000);
+  assert.equal(summary.nextPayment.dueDate, '2026-11-01'); assert.equal(summary.nextPayment.balance, 5000);
+});
+
+test('paciente sem registros tem resumo vazio sem próxima sessão ou cobrança inventada', () => {
+  const summary = patientOverview({ encounters: [], packages: [], charges: [], payments: [] }, '2026-10-20');
+  assert.equal(summary.completed, 0); assert.equal(summary.remainingSessions, 0);
+  assert.equal(summary.pending, 0); assert.equal(summary.last, undefined); assert.equal(summary.nextPayment, undefined);
+  assert.deepEqual(summary.guidance, []); assert.deepEqual(summary.recent, []);
+});
 test('origem automática aceita localhost, IP e portas variáveis sem aceitar outros sites', () => {
   const req = (url, origin, headers = {}) => new Request(url, { headers: { origin, ...headers } });
   for (const host of ['localhost:3000', '127.0.0.1:3001', '[::1]:4010']) assert(isAllowedOrigin(req(`http://${host}/api/login`, `http://${host}`)));
