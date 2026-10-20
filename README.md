@@ -23,12 +23,12 @@ O modo demo é bloqueado quando `NODE_ENV=production` ou na Vercel. Ele serve ap
 
 1. Ative Authentication → Sign-in method → Email/Password e crie um banco Cloud Firestore.
 2. Copie `.env.example` para `.env.local`, mudando `DEMO_MODE=false`. Preencha `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` e `FIREBASE_PRIVATE_KEY` com a conta de serviço do seu projeto. Mantenha esse arquivo fora do Git. Não cole a chave privada no chat.
-3. Defina `FIREBASE_WEB_API_KEY` com a chave do projeto, `RATE_LIMIT_SECRET` com uma sequência aleatória e `APP_ORIGIN` com a origem exata do site (local: `http://127.0.0.1:3000`). Todos esses valores ficam somente no servidor, sem prefixo `NEXT_PUBLIC_`.
+3. Defina `FIREBASE_WEB_API_KEY` com a chave do projeto e `RATE_LIMIT_SECRET` com uma sequência aleatória. Esses valores ficam somente no servidor, sem prefixo `NEXT_PUBLIC_`. Não é necessário configurar `APP_ORIGIN`: a API compara a origem da requisição com o endereço acessado. `localhost` e `127.0.0.1` funcionam na porta em que o servidor estiver rodando.
 4. Publique as regras de `firestore.rules` pelo console Firebase ou Firebase CLI. Elas bloqueiam acessos diretos por SDK cliente. O Admin SDK da API usa credenciais de servidor; as permissões são verificadas na API.
 5. Crie o primeiro administrador pelo terminal:
 
 ```sh
-npm run admin:create -- gustavobrioschi18@gmail.com "Gustavo Brioschi"
+npm run admin:create -- seu-email@exemplo.com "Seu nome"
 ```
 
 O comando mostra a senha temporária uma única vez. A troca é obrigatória no primeiro acesso. Para inserir a massa fictícia (mais de 500 registros), em banco sem dados das entidades:
@@ -41,7 +41,7 @@ O script não sobrescreve coleções existentes. Caso uma importação seja inte
 
 ## Publicação na Vercel
 
-Importe este repositório como projeto Next.js. Configure as mesmas variáveis em Environment Variables, com `DEMO_MODE=false` e `APP_ORIGIN=https://seu-dominio.vercel.app` (sem barra final). O domínio precisa corresponder ao endereço acessado; previews em outro domínio precisam de uma configuração de origem própria. Não é necessário usar Firebase Cloud Functions. O backend roda na Vercel.
+Importe este repositório como projeto Next.js. Configure as mesmas variáveis em Environment Variables, com `DEMO_MODE=false`. A validação de origem acompanha automaticamente o domínio acessado, inclusive os previews da Vercel. Não é necessário usar Firebase Cloud Functions. O backend roda na Vercel.
 
 Depois de configurar: teste login real, troca de senha, geração de acesso e cada perfil antes de entregar. A integração real não foi validada até fornecer as credenciais localmente. Firebase Spark e Vercel Hobby têm cotas; acompanhar os consoles é parte da configuração.
 

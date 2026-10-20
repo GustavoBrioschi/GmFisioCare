@@ -4,6 +4,7 @@ import { demoMode } from '../../../lib/firebase.mjs';
 import { readState, transaction } from '../../../lib/store.mjs';
 import { assert, mutate, visibleState, canPatient } from '../../../lib/domain.mjs';
 import { rateLimit } from '../../../lib/rate-limit.mjs';
+import { isAllowedOrigin } from '../../../lib/origin.mjs';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const reply = (body, status = 200) => NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store, private' } });
@@ -13,8 +14,7 @@ async function handler(req, context) {
     const { path } = await context.params; const action = path.join('/');
     if (req.method === 'GET' && action === 'config') return reply({ demo: demoMode() });
     if (req.method !== 'GET') {
-      const origin = req.headers.get('origin');
-      assert(process.env.APP_ORIGIN && origin === new URL(process.env.APP_ORIGIN).origin, 'Origem não autorizada.', 403);
+      assert(isAllowedOrigin(req, { vercel: Boolean(process.env.VERCEL) }), 'Origem não autorizada. Reabra o site no endereço do servidor.', 403);
       assert(req.headers.get('content-type')?.includes('application/json'), 'Formato inválido.', 415);
     }
     const raw = req.method === 'GET' ? '' : await req.text(); assert(raw.length <= 20000, 'Requisição muito grande.', 413);
@@ -31,7 +31,7 @@ async function handler(req, context) {
     await rateLimit(`user:${user.id}`);
     if (action === 'logout' && req.method === 'POST') return setCookie(reply({ ok: true }), null);
     if (action === 'me' && req.method === 'GET') return reply({ user, demo: demoMode() });
-    if (action === 'password' && req.method === 'POST') { assert(typeof body.oldPassword === 'string' && typeof body.newPassword === 'string', 'Informe as senhas.'); await rateLimit(`password:${user.id}`, 5, 15 * 60000); const cookie = await changePassword(user, body.oldPassword, body.newPassword); return setCookie(reply({ ok: true, loginRequired: !cookie }), cookie); }
+    if (action === 'password' && req.method === 'POST') { assert(typeof body.newPassword === 'string', 'Informe a nova senha.'); assert(user.mustChangePassword || typeof body.oldPassword === 'string', 'Informe a senha atual.'); await rateLimit(`password:${user.id}`, 5, 15 * 60000); const cookie = await changePassword(user, body.oldPassword, body.newPassword); return setCookie(reply({ ok: true, loginRequired: !cookie }), cookie); }
     assert(!user.mustChangePassword, 'Troque a senha temporária antes de continuar.', 403);
     if (action === 'state' && req.method === 'GET') {
       const s = await readState();

@@ -1,16 +1,18 @@
 {
   "name": "gm-fisio-care",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
-    "test": "node tests/domain.test.mjs",
+    "test": "node tests/domain.test.mjs && node tests/improvements.test.mjs",
     "test:api": "node tests/api-smoke.mjs",
     "admin:create": "node --env-file=.env.local scripts/create-admin.mjs",
-    "seed": "node --env-file=.env.local scripts/seed.mjs"
+    "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "seed:reports": "node --env-file=.env.local scripts/seed-reports.mjs",
+    "seed:reports:apply": "node --env-file=.env.local scripts/seed-reports.mjs --apply"
   },
   "overrides": {
     "uuid": "^11.1.1"
